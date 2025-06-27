@@ -135,13 +135,35 @@ export default function RoomDetails() {
             )}
           </div>
 
+          {/* status */}
+          <p className="mt-2">
+            <span className="font-semibold">Status:</span>{" "}
+            <span
+              className={`${
+                room.status === "Available"
+                  ? "text-green-600"
+                  : room.status === "Booked"
+                  ? "text-red-600"
+                  : "text-gray-600"
+              }`}
+            >
+              {room.status}
+            </span>
+          </p>
+
           {/* Book Button */}
           <div className="pt-4">
             <button
+              disabled={room.status !== "Available"}
+              type="button"
               onClick={() => setIsBookingOpen(true)}
-              className="bg-pink-700 text-white px-6 py-2 rounded hover:bg-pink-800 transition"
+              className={`${
+                room.status !== "Available"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-pink-700 hover:bg-pink-800"
+              } text-white px-4 py-2 rounded shadow transition-colors duration-200`}
             >
-              🏠 Book Now
+              Book Now
             </button>
           </div>
         </div>

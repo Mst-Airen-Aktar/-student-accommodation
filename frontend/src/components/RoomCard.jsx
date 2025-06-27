@@ -44,8 +44,16 @@ export default function RoomCard({ room }) {
       <div className="p-4 space-y-2">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold text-pink-800">{room.title}</h2>
-          <span className="text-xs text-gray-500">
-            {new Date(room.availableFrom).toLocaleDateString()}
+          <span
+            className={`text-xs font-medium px-2 py-1 rounded-full ${
+              room.status === "Available"
+                ? "bg-green-100 text-green-800"
+                : room.status === "Booked"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            {room.status}
           </span>
         </div>
 
@@ -69,6 +77,22 @@ export default function RoomCard({ room }) {
         {/* Description preview */}
         <p className="text-xs text-gray-500 truncate">
           {room.description.slice(0, 60)}...
+        </p>
+
+        {/* status */}
+        <p className="text-xs text-gray-500">
+          Status:{" "}
+          <span
+            className={`${
+              room.status === "Available"
+                ? "text-green-600"
+                : room.status === "Booked"
+                ? "text-red-600"
+                : "text-gray-600"
+            }`}
+          >
+            {room.status}
+          </span>
         </p>
 
         {/* View button */}

@@ -42,6 +42,12 @@ const roomSchema = new mongoose.Schema(
 
     roomImages: [{ type: String }],
 
+    status: {
+      type: String,
+      enum: ["Available", "Booked", "Not Available"],
+      default: "Available",
+    },
+
     postedBy: { type: String, required: true }, // Firebase UID of landlord
   },
   {

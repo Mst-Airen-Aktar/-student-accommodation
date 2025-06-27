@@ -2,7 +2,11 @@ function EditRoomModal({ isOpen, onClose, room, refresh }) {
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    if (room) setFormData(room);
+    if (room)
+      setFormData({
+        ...room,
+        status: room.status || "Available",
+      });
   }, [room]);
 
   const handleChange = (e) => {
@@ -89,6 +93,21 @@ function EditRoomModal({ isOpen, onClose, room, refresh }) {
                 className="w-full border px-3 py-2 rounded"
               ></textarea>
             </div>
+
+            <div>
+              <label className="block font-medium">Status</label>
+              <select
+                name="status"
+                value={formData.status || "Available"}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              >
+                <option value="Available">Available</option>
+                <option value="Booked">Booked</option>
+                <option value="Not Available">Not Available</option>
+              </select>
+            </div>
+
             <div className="flex justify-end space-x-3">
               <button
                 type="button"

@@ -1,14 +1,128 @@
+function EditRoomModal({ isOpen, onClose, room, refresh }) {
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    if (room) setFormData(room);
+  }, [room]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:5000/api/rooms/${room._id}`, formData);
+      toast.success("Room updated");
+      onClose();
+      refresh();
+    } catch (err) {
+      toast.error("Update failed");
+    }
+  };
+
+  if (!room) return null;
+
+  return (
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="bg-white p-6 rounded max-w-xl w-full space-y-4">
+          <Dialog.Title className="text-lg font-bold text-pink-800">
+            ✏️ Edit Room
+          </Dialog.Title>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div>
+              <label className="block font-medium">Title</label>
+              <input
+                name="title"
+                value={formData.title || ""}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div>
+              <label className="block font-medium">City</label>
+              <input
+                name="city"
+                value={formData.city || ""}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Rent (€)</label>
+              <input
+                type="number"
+                name="rent"
+                value={formData.rent || ""}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Room Size</label>
+              <input
+                name="roomSize"
+                value={formData.roomSize || ""}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Available From</label>
+              <input
+                type="date"
+                name="availableFrom"
+                value={formData.availableFrom?.split("T")[0] || ""}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Description</label>
+              <textarea
+                name="description"
+                value={formData.description || ""}
+                onChange={handleChange}
+                rows={3}
+                className="w-full border px-3 py-2 rounded"
+              ></textarea>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border rounded"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-pink-800 text-white rounded"
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+}
+
 // src/pages/landlord/LandlordRooms.jsx
+import { Dialog } from "@headlessui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
-
 export default function LandlordRooms() {
   const { user } = useContext(AuthContext);
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [roomToEdit, setRoomToEdit] = useState(null);
 
   const fetchRooms = async () => {
     try {
@@ -33,6 +147,16 @@ export default function LandlordRooms() {
       console.error("Failed to delete", err);
       toast.error("Delete failed");
     }
+  };
+
+  const openEditModal = (room) => {
+    setRoomToEdit(room);
+    setEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setRoomToEdit(null);
   };
 
   useEffect(() => {
@@ -70,12 +194,12 @@ export default function LandlordRooms() {
                 {room.description}
               </p>
               <div className="flex justify-between items-center">
-                <Link
-                  to={`/edit-room/${room._id}`}
+                <button
+                  onClick={() => openEditModal(room)}
                   className="text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
                 >
                   ✏️ Edit
-                </Link>
+                </button>
                 <button
                   onClick={() => handleDelete(room._id)}
                   className="text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
@@ -83,6 +207,14 @@ export default function LandlordRooms() {
                   ❌ Delete
                 </button>
               </div>
+
+              {/* Modal */}
+              <EditRoomModal
+                isOpen={editModalOpen}
+                onClose={closeEditModal}
+                room={roomToEdit}
+                refresh={fetchRooms}
+              />
             </div>
           ))}
         </div>

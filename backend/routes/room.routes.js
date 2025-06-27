@@ -95,6 +95,35 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// update room by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedRoom = await Room.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updatedRoom) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    res.json(updatedRoom);
+  } catch (error) {
+    console.error("Error updating room:", error.message);
+    res.status(500).json({ message: "Failed to update room" });
+  }
+});
+// DELETE /api/rooms/:id - Delete room by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedRoom = await Room.findByIdAndDelete(req.params.id);
+    if (!deletedRoom) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    res.json({ message: "Room deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting room:", error.message);
+    res.status(500).json({ message: "Failed to delete room" });
+  }
+});
+
 // GET /api/rooms/landlord/:uid - Rooms posted by one landlord
 router.get("/landlord/:uid", async (req, res) => {
   try {

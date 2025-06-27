@@ -8,7 +8,7 @@ import HomePage from "../pages/HomePage";
 import AddRoom from "../pages/landlord/AddRoom";
 import BookingList from "../pages/landlord/BookingList";
 import Dashboard from "../pages/landlord/Dashboard";
-
+import LandlordRooms from "../pages/landlord/LandlordRooms";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "add-room",
         element: <AddRoom />,
+      },
+      {
+        path: "rooms",
+        element: <LandlordRooms />,
       },
     ],
   },

@@ -106,6 +106,9 @@ export default function BookingList() {
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 5;
 
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   const fetchBookings = async () => {
     const res = await axios.get("http://localhost:5000/api/bookings");
     setBookings(res.data);
@@ -119,6 +122,18 @@ export default function BookingList() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to update status");
+    }
+  };
+
+  const openModal = async (bookingId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/bookings/${bookingId}`
+      );
+      setSelectedBooking(res.data);
+      setShowModal(true);
+    } catch (err) {
+      console.error("Error loading booking details", err);
     }
   };
 
@@ -210,10 +225,78 @@ export default function BookingList() {
                     <option value="rejected">Rejected</option>
                   </select>
                 </td>
+
+                <td>
+                  <button
+                    className="text-blue-600 underline text-sm"
+                    onClick={() => console.log(b._id) || openModal(b._id)}
+                  >
+                    View Details
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {showModal && selectedBooking && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg max-w-xl w-full shadow-lg relative">
+              <button
+                onClick={() => setShowModal(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
+              >
+                &times;
+              </button>
+
+              <h2 className="text-xl font-semibold text-pink-800 mb-3">
+                👤 Student Profile
+              </h2>
+              <p>
+                <strong>Name:</strong> {selectedBooking.studentId?.name}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedBooking.studentId?.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {selectedBooking.studentId?.phone}
+              </p>
+
+              <h3 className="mt-4 text-lg font-semibold text-gray-700 mb-2">
+                💳 Rent History
+              </h3>
+              {selectedBooking.rentHistory?.length > 0 ? (
+                <table className="w-full text-sm border">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2">Month</th>
+                      <th className="border p-2">Amount (€)</th>
+                      <th className="border p-2">Paid On</th>
+                      <th className="border p-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedBooking.rentHistory.map((item, index) => (
+                      <tr key={index}>
+                        <td className="border p-2">{item.month}</td>
+                        <td className="border p-2">{item.amount}</td>
+                        <td className="border p-2">
+                          {item.paidOn
+                            ? new Date(item.paidOn).toLocaleDateString()
+                            : "—"}
+                        </td>
+                        <td className="border p-2">{item.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No rent history available.</p>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-center items-center mt-6 gap-2">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

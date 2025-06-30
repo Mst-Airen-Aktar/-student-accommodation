@@ -9,6 +9,9 @@ import AddRoom from "../pages/landlord/AddRoom";
 import BookingList from "../pages/landlord/BookingList";
 import Dashboard from "../pages/landlord/Dashboard";
 import LandlordRooms from "../pages/landlord/LandlordRooms";
+import LoginPage from "../pages/LoginPage";
+import StudentBookings from "../pages/student/StudentBooking";
+import ProtectedRoute from "../private/ProtectedRoute";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -26,6 +29,14 @@ const router = createBrowserRouter([
         path: "/room/:id",
         element: <RoomDetails />,
       },
+      {
+        path: "/my-bookings",
+        element: <StudentBookings />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
     ],
   },
   {
@@ -34,7 +45,12 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute requiredRole="landlord">
+            {" "}
+            <Dashboard />{" "}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "bookings",

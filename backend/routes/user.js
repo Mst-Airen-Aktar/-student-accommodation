@@ -22,8 +22,10 @@ router.post("/register", async (req, res) => {
 });
 
 router.get("/:uid", async (req, res) => {
+  console.log("Fetching user with UID:", req.params.uid);
   try {
     const user = await User.findOne({ uid: req.params.uid });
+    console.log("User found:", user);
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {

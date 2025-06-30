@@ -1,16 +1,16 @@
 import { Dialog } from "@headlessui/react";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import { AuthContext } from "../context/AuthProvider";
 export default function RoomDetails() {
   const { id } = useParams();
   const [room, setRoom] = useState(null);
   const [mainImg, setMainImg] = useState("");
   const [loading, setLoading] = useState(true);
   const [landlordInfo, setLandlordInfo] = useState(null); // Optional: Contact info
-
+  const { user } = useContext(AuthContext); // Assuming you have AuthContext to get user info
   // for booking modal
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingForm, setBookingForm] = useState({
@@ -48,6 +48,7 @@ export default function RoomDetails() {
       await axios.post("http://localhost:5000/api/bookings", {
         ...bookingForm,
         roomId: room._id,
+        studentId: user?.uid,
       });
       alert("✅ Booking request sent!");
       setIsBookingOpen(false);
@@ -187,6 +188,8 @@ export default function RoomDetails() {
           </div>
         </div>
       </div>
+
+      {/* modal for booking */}
       <Dialog
         open={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
@@ -202,7 +205,7 @@ export default function RoomDetails() {
               <input
                 type="text"
                 placeholder="Your Name"
-                value={bookingForm.userName}
+                value={user?.displayName || bookingForm.userName}
                 onChange={(e) =>
                   setBookingForm({ ...bookingForm, userName: e.target.value })
                 }

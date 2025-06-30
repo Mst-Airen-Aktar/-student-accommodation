@@ -20,6 +20,8 @@ const AuthProvider = ({ children }) => {
   const [dark, setDark] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [userRole, setUserRole] = useState(null);
+
   const darkModeHandler = () => {
     setDark(!dark);
     document.body.classList.toggle("dark");
@@ -45,13 +47,29 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
+
+      console.log("Current user:", currentUser.uid);
+      if (currentUser) {
+        try {
+          const res = await fetch(
+            `http://localhost:5000/api/users/${currentUser?.uid}`
+          );
+          const data = await res.json();
+          console.log("User role fetched:", data);
+          setUserRole(data.role || "student"); // fallback
+        } catch (err) {
+          console.error("Error fetching user role:", err);
+          setUserRole("student"); // fallback role
+        }
+      } else {
+        setUserRole(null);
+      }
     });
-    return () => {
-      unsubscribe();
-    };
+
+    return () => unsubscribe();
   }, []);
 
   const signOutUser = () => {
@@ -79,6 +97,7 @@ const AuthProvider = ({ children }) => {
     updateUserProfile,
     darkModeHandler,
 
+    userRole,
     dark,
     user,
     loading,

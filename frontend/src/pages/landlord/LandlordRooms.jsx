@@ -137,22 +137,21 @@ import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthProvider";
 export default function LandlordRooms() {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
   const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [roomToEdit, setRoomToEdit] = useState(null);
 
   const fetchRooms = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/rooms?postedBy=${user.uid}`
+        `http://localhost:5000/api/rooms?postedBy=${user?.uid}`
       );
       setRooms(res.data);
     } catch (err) {
       console.error("Failed to fetch rooms", err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -189,53 +188,54 @@ export default function LandlordRooms() {
       <h2 className="text-2xl font-bold text-pink-800 mb-6">
         🏠 My Posted Rooms
       </h2>
-      {rooms.length === 0 ? (
+      {user && rooms.length === 0 ? (
         <p>No rooms posted yet.</p>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
-          {rooms.map((room) => (
-            <div
-              key={room._id}
-              className="bg-white rounded-xl shadow p-4 space-y-2 relative"
-            >
-              <img
-                src={room.roomImages[0] || "/no-image.png"}
-                alt={room.title}
-                className="w-full h-48 object-cover rounded"
-              />
-              <h3 className="text-lg font-semibold text-pink-800">
-                {room.title}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {room.city} • {room.roomSize} sqm
-              </p>
-              <p className="text-sm text-gray-600 truncate">
-                {room.description}
-              </p>
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={() => openEditModal(room)}
-                  className="text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(room._id)}
-                  className="text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
-                >
-                  ❌ Delete
-                </button>
-              </div>
+          {user &&
+            rooms.map((room) => (
+              <div
+                key={room._id}
+                className="bg-white rounded-xl shadow p-4 space-y-2 relative"
+              >
+                <img
+                  src={room.roomImages[0] || "/no-image.png"}
+                  alt={room.title}
+                  className="w-full h-48 object-cover rounded"
+                />
+                <h3 className="text-lg font-semibold text-pink-800">
+                  {room.title}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {room.city} • {room.roomSize} sqm
+                </p>
+                <p className="text-sm text-gray-600 truncate">
+                  {room.description}
+                </p>
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={() => openEditModal(room)}
+                    className="text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(room._id)}
+                    className="text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
+                  >
+                    ❌ Delete
+                  </button>
+                </div>
 
-              {/* Modal */}
-              <EditRoomModal
-                isOpen={editModalOpen}
-                onClose={closeEditModal}
-                room={roomToEdit}
-                refresh={fetchRooms}
-              />
-            </div>
-          ))}
+                {/* Modal */}
+                <EditRoomModal
+                  isOpen={editModalOpen}
+                  onClose={closeEditModal}
+                  room={roomToEdit}
+                  refresh={fetchRooms}
+                />
+              </div>
+            ))}
         </div>
       )}
     </div>

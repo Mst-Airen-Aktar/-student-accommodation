@@ -5,6 +5,8 @@ import { AuthContext } from "../context/AuthProvider";
 export default function ProtectedRoute({ children, requiredRole }) {
   const { user, userRole, loading } = useContext(AuthContext);
 
+  console.log("ProtectedRoute user:", user);
+  console.log("ProtectedRoute userRole:", requiredRole);
   if (loading) return <p>Loading...</p>;
 
   if (!user) return <Navigate to="/login" />;

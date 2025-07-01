@@ -10,6 +10,7 @@ import BookingList from "../pages/landlord/BookingList";
 import Dashboard from "../pages/landlord/Dashboard";
 import LandlordRooms from "../pages/landlord/LandlordRooms";
 import LoginPage from "../pages/LoginPage";
+import SignUp from "../pages/SignUp";
 import StudentBookings from "../pages/student/StudentBooking";
 import ProtectedRoute from "../private/ProtectedRoute";
 const router = createBrowserRouter([
@@ -31,11 +32,20 @@ const router = createBrowserRouter([
       },
       {
         path: "/my-bookings",
-        element: <StudentBookings />,
+        element: (
+          <ProtectedRoute requiredRole="student">
+            {" "}
+            <StudentBookings />{" "}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/register",
+        element: <SignUp />,
       },
     ],
   },
@@ -54,15 +64,30 @@ const router = createBrowserRouter([
       },
       {
         path: "bookings",
-        element: <BookingList />,
+        element: (
+          <ProtectedRoute requiredRole="landlord">
+            {" "}
+            <BookingList />{" "}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "add-room",
-        element: <AddRoom />,
+        element: (
+          <ProtectedRoute requiredRole="landlord">
+            {" "}
+            <AddRoom />{" "}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "rooms",
-        element: <LandlordRooms />,
+        element: (
+          <ProtectedRoute requiredRole="landlord">
+            {" "}
+            <LandlordRooms />{" "}
+          </ProtectedRoute>
+        ),
       },
     ],
   },

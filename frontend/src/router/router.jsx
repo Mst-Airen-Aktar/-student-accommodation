@@ -12,6 +12,7 @@ import LandlordRooms from "../pages/landlord/LandlordRooms";
 import LoginPage from "../pages/LoginPage";
 import SignUp from "../pages/SignUp";
 import StudentBookings from "../pages/student/StudentBooking";
+import StudentDashboardLayout from "../pages/student/StudentDashboardLayout";
 import ProtectedRoute from "../private/ProtectedRoute";
 const router = createBrowserRouter([
   {
@@ -48,6 +49,15 @@ const router = createBrowserRouter([
         element: <SignUp />,
       },
     ],
+  },
+  {
+    path: "/student",
+    element: <StudentDashboardLayout />,
+    // children: [
+    //   { index: true, element: <MyRentals /> },
+    //   { path: "profile", element: <Profile /> },
+    //   { path: "notifications", element: <Notifications /> },
+    // ],
   },
   {
     path: "/admin",

@@ -1,5 +1,5 @@
 import { Menu, X } from "lucide-react"; // Make sure lucide-react is installed
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 
@@ -7,16 +7,53 @@ const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null); // Optional: if you want to manage user roles
   const navigate = useNavigate();
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleMobile = () => setMobileOpen(!mobileOpen);
   const closeMobile = () => setMobileOpen(false);
 
+  //get user from database
+  useEffect(() => {
+    if (user) {
+      // Assuming you have a function to fetch user details
+      const fetchUserDetails = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/users/${user?.uid}`
+          );
+          const userData = await response.json();
+          console.log("Fetched user data:", userData);
+          setUserRole(userData.role);
+          console.log("Fetched user role:", userData.role);
+        } catch (error) {
+          console.error("Failed to fetch user details:", error);
+        }
+      };
+      fetchUserDetails();
+    }
+  }, [user]);
+
   const handleDashboard = () => {
+    console.log(userRole);
+
     setDropdownOpen(false);
-    navigate("/admin");
+    // if (userRole) return;
+    if (userRole === "student") {
+      navigate("/student");
+    } else if (userRole === "landlord") {
+      navigate("/admin");
+    } else if (userRole === "admin") {
+      navigate("/admin");
+    }
   };
+
+  //   const navigate = useNavigate();
+
+  // const handleDashboard = () => {
+
+  // };
 
   const menuLinks = (
     <>

@@ -21,6 +21,31 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// routes/user.routes.js
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find({ role: { $ne: "admin" } }); // exclude admin
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// routes/user.routes.js
+router.put("/verify/:id", async (req, res) => {
+  try {
+    const { verified, verificationNote } = req.body;
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      { verified, verificationNote },
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/:uid", async (req, res) => {
   console.log("Fetching user with UID:", req.params.uid);
   try {

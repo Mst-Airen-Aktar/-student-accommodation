@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema({
     enum: ["student", "landlord", "admin"],
     required: true,
   },
+  profileImage: { type: String },
+  verified: { type: Boolean, default: false }, // new
+  verificationNote: { type: String }, // admin note
   createdAt: { type: Date, default: Date.now },
 });
 

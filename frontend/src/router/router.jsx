@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RoomDetails from "../components/RoomDetails";
 import AdminLayout from "../layout/AdminLayout";
 import MainLayout from "../layout/MainLayout";
+import VerifyUsers from "../pages/Admin/VerifyUsers";
 import BrowseRooms from "../pages/BrowseRooms";
 import HomePage from "../pages/HomePage";
 import AddRoom from "../pages/landlord/AddRoom";
@@ -113,6 +114,10 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "/verify",
+    element: <VerifyUsers />,
   },
 ]);
 

@@ -49,23 +49,24 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
 
-      console.log("Current user:", currentUser.uid);
       if (currentUser) {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/users/${currentUser?.uid}`
+            `http://localhost:5000/api/users/${currentUser.uid}`
           );
           const data = await res.json();
           console.log("User role fetched:", data);
-          setUserRole(data.role || "student"); // fallback
+          setUserRole(data.role || "student"); // fallback role
         } catch (err) {
           console.error("Error fetching user role:", err);
-          setUserRole("student"); // fallback role
+          setUserRole("student");
+        } finally {
+          setLoading(false);
         }
       } else {
         setUserRole(null);
+        setLoading(false);
       }
     });
 

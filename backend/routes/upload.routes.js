@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
-// const { v2: cloudinary } = require("cloudinary");
-const cloudinary = require("../config/cloudinary.config"); // Adjust the path as necessary
+
+const cloudinary = require("../config/cloudinary.config");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const router = express.Router();
 
@@ -18,7 +18,7 @@ const upload = multer({ storage });
 
 // POST /api/upload
 router.post("/", upload.array("images", 3), async (req, res) => {
-  console.log("🚀 Upload request received:", req.files); // ADD THIS
+  console.log("🚀 Upload request received:", req.files);
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No files received" });
@@ -27,7 +27,7 @@ router.post("/", upload.array("images", 3), async (req, res) => {
     const urls = req.files.map((file) => file.path);
     res.status(200).json(urls);
   } catch (error) {
-    console.error("❌ Upload failed:", error); // ADD THIS
+    console.error(" Upload failed:", error);
     res.status(500).json({ message: "Upload failed", error: error.message });
   }
 });

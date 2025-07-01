@@ -13,6 +13,7 @@ import LoginPage from "../pages/LoginPage";
 import SignUp from "../pages/SignUp";
 import StudentBookings from "../pages/student/StudentBooking";
 import StudentDashboardLayout from "../pages/student/StudentDashboardLayout";
+import StudentProfile from "../pages/student/StudentProfile";
 import ProtectedRoute from "../private/ProtectedRoute";
 const router = createBrowserRouter([
   {
@@ -52,12 +53,24 @@ const router = createBrowserRouter([
   },
   {
     path: "/student",
-    element: <StudentDashboardLayout />,
-    // children: [
-    //   { index: true, element: <MyRentals /> },
-    //   { path: "profile", element: <Profile /> },
-    //   { path: "notifications", element: <Notifications /> },
-    // ],
+    element: (
+      <ProtectedRoute requiredRole="student">
+        {" "}
+        <StudentDashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, element: <StudentBookings /> },
+      {
+        path: "/student/profile",
+        element: (
+          <ProtectedRoute requiredRole="student">
+            <StudentProfile />
+          </ProtectedRoute>
+        ),
+      },
+      { path: "notifications", element: <h1>notifications</h1> },
+    ],
   },
   {
     path: "/admin",

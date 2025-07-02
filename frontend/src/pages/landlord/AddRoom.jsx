@@ -1,9 +1,11 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
-
 export default function AddRoom() {
   const { user } = useContext(AuthContext);
+  const [isVerified, setIsVerified] = useState(null);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -66,6 +68,12 @@ export default function AddRoom() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isVerified) {
+      toast.error(
+        "Your account is under verification. You cannot post a room until verified."
+      );
+      return;
+    }
 
     if (images.length === 0) {
       alert("Please upload at least one image.");
@@ -74,6 +82,7 @@ export default function AddRoom() {
 
     const room = {
       ...formData,
+      uid: user.uid,
       rent: parseFloat(formData.rent),
       securityDeposit: parseFloat(formData.securityDeposit),
       numberOfBeds: parseInt(formData.numberOfBeds),
@@ -85,7 +94,7 @@ export default function AddRoom() {
 
     try {
       await axios.post("http://localhost:5000/api/rooms", room);
-      alert("✅ Room added successfully!");
+      alert("Room added successfully!");
       // setFormData({
       //   title: "",
       //   description: "",
@@ -114,7 +123,7 @@ export default function AddRoom() {
       // setImages([]);
       // setPreviewUrls([]);
     } catch (err) {
-      alert("❌ Failed to add room");
+      alert("Failed to add room");
       console.error(err);
     }
   };
@@ -136,8 +145,32 @@ export default function AddRoom() {
     setFilteredRooms(res.data);
   };
 
+  useEffect(() => {
+    const fetchLandlordStatus = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/landlords/${user.uid}`
+        );
+        setIsVerified(res.data?.verified);
+      } catch (err) {
+        console.error("Failed to fetch landlord info", err);
+        setIsVerified(false);
+      }
+    };
+
+    if (user?.uid) {
+      fetchLandlordStatus();
+    }
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {isVerified === false && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded mb-4">
+          <p className="font-medium">🔒 Your account is under verification.</p>
+          <p>You cannot post a room until the admin verifies your identity.</p>
+        </div>
+      )}
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
         <h1 className="text-2xl font-bold text-pink-800 mb-6">
           ➕ Add New Room
@@ -491,12 +524,14 @@ export default function AddRoom() {
               </div>
             )}
           </div>
-
           <button
             type="submit"
-            className="bg-pink-800 text-white px-6 py-2 rounded hover:bg-pink-700"
+            className={`mt-6 w-full bg-pink-800 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded transition ${
+              isVerified === false ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isVerified === false}
           >
-            Submit Room
+            {isVerified === false ? "Account Under Verification" : "Add Room"}
           </button>
         </form>
       </div>

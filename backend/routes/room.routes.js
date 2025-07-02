@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Room = require("../models/Room");
+const Landlord = require("../models/Landlord");
 
 // GET /api/rooms?city=Helsinki&minRent=400&maxRent=800&furnished=true
 router.get("/", async (req, res) => {
@@ -63,7 +64,26 @@ router.get("/", async (req, res) => {
 // POST /api/rooms - Add new room
 router.post("/", async (req, res) => {
   try {
-    const newRoom = new Room(req.body);
+    const { uid, ...roomData } = req.body;
+
+    // Step 1: Ensure landlord exists
+    const landlord = await Landlord.findOne({ uid });
+    if (!landlord) {
+      return res.status(404).json({ message: "Landlord not found" });
+    }
+
+    // Step 2: Check verification status
+    if (!landlord.verified) {
+      return res
+        .status(403)
+        .json({ message: "Landlord not verified. Cannot post rooms." });
+    }
+
+    // Step 3: Save the room
+    const newRoom = new Room({
+      ...roomData,
+      landlordId: uid, // optional: track who posted it
+    });
     const savedRoom = await newRoom.save();
     res.status(201).json(savedRoom);
   } catch (error) {

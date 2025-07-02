@@ -101,8 +101,6 @@ export default function LandlordProfile() {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* image upload click on avatar then upload image,when select image ity preview on those avatar  and aftar save it will permanently sav */}
-
         <div className="flex flex-col items-center space-x-4 mb-6">
           <img
             src={

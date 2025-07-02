@@ -43,7 +43,7 @@ const Navbar = () => {
     if (userRole === "student") {
       navigate("/student");
     } else if (userRole === "landlord") {
-      navigate("/admin");
+      navigate("/landlord");
     } else if (userRole === "admin") {
       navigate("/admin");
     }

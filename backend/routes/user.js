@@ -31,6 +31,32 @@ router.get("/", async (req, res) => {
   }
 });
 
+// POST /api/admins - Create new admin
+router.post("/", async (req, res) => {
+  const { uid, name, email } = req.body;
+
+  try {
+    // Check if already exists
+    const existing = await User.findOne({ uid });
+    if (existing) {
+      return res.status(409).json({ message: "Admin already exists" });
+    }
+
+    const newAdmin = new User({
+      uid,
+      name,
+      email,
+      role: "admin",
+    });
+
+    await newAdmin.save();
+    res.status(201).json({ message: "Admin created successfully", newAdmin });
+  } catch (err) {
+    console.error("Error creating admin:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // routes/user.routes.js
 router.put("/verify/:id", async (req, res) => {
   try {

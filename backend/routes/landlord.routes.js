@@ -103,4 +103,27 @@ router.post(
   }
 );
 
+// PUT /api/landlords/:uid/verify
+router.put("/:uid/verify", async (req, res) => {
+  try {
+    const { verified } = req.body;
+
+    const landlord = await Landlord.findOneAndUpdate(
+      { uid: req.params.uid },
+      { verified },
+      { new: true }
+    );
+
+    if (!landlord)
+      return res.status(404).json({ message: "Landlord not found" });
+
+    res.json({
+      message: `Landlord has been ${verified ? "verified" : "unverified"}.`,
+      landlord,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
 module.exports = router;

@@ -23,6 +23,7 @@ const landlordSchema = new mongoose.Schema({
   },
 
   profilePhotoUrl: { type: String }, // landlord profile picture
+  verified: { type: Boolean, default: false },
 
   createdAt: { type: Date, default: Date.now },
 });

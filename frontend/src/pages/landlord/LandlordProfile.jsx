@@ -92,6 +92,7 @@ export default function LandlordProfile() {
     }
     setLoading(false);
   }
+  console.log(formData);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
@@ -102,17 +103,25 @@ export default function LandlordProfile() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* image upload click on avatar then upload image,when select image ity preview on those avatar  and aftar save it will permanently sav */}
 
-        <div className="flex items-center space-x-4 mb-6">
+        <div className="flex flex-col items-center space-x-4 mb-6">
           <img
             src={
-              formData?.profilePhoto ||
+              formData?.profilePhotoUrl ||
               "https://www.gravatar.com/avatar?d=mp&s=200"
             }
             alt="Profile"
             className="h-16 w-16 rounded-full border-2 border-pink-
-800 object-cover"
+800 object-cover mx-auto"
           />
-          <div className="flex flex-col">
+          <button
+            type="button"
+            onClick={() => document.querySelector('input[type="file"]').click()}
+            className="text-sm text-pink-600 hover:text-pink-800 transition-colors cursor-pointer"
+          >
+            Change Profile Photo
+          </button>
+
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">
               Profile Photo
             </label>
@@ -127,7 +136,16 @@ export default function LandlordProfile() {
                 file:bg-pink-50 file:text-pink-700
                 hover:file:bg-pink-100"
             />
-          </div>
+          </div> */}
+        </div>
+        {/* see landlord verified or not */}
+        <div className="text-sm text-gray-600 mb-4">
+          <span className="font-medium">Verification Status:</span>{" "}
+          {formData.verified ? (
+            <span className="text-green-600">Verified</span>
+          ) : (
+            <span className="text-red-600">Not Verified</span>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -16,6 +16,16 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage });
+router.get("/", async (req, res) => {
+  try {
+    const landlords = await Landlord.find();
+    res.json(landlords);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch landlords", error: err.message });
+  }
+});
 
 // Get landlord profile by uid
 router.get("/:uid", async (req, res) => {

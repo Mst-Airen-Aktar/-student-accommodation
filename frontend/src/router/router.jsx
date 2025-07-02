@@ -2,6 +2,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import RoomDetails from "../components/RoomDetails";
 import AdminLayout from "../layout/AdminLayout";
+import LandLordLayout from "../layout/LandLordLayout";
 import MainLayout from "../layout/MainLayout";
 import VerifyUsers from "../pages/Admin/VerifyUsers";
 import BrowseRooms from "../pages/BrowseRooms";
@@ -74,8 +75,18 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/landlord",
+    path: "/admin",
     element: <AdminLayout />,
+    children: [
+      { path: "dashboard", element: <h1>Admin Dashboard</h1> },
+      { path: "users", element: <h1>All Users</h1> },
+      { path: "verify", element: <h1>Verification</h1> },
+      { path: "settings", element: <h1>Settings</h1> },
+    ],
+  },
+  {
+    path: "/landlord",
+    element: <LandLordLayout />,
     children: [
       {
         index: true,

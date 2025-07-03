@@ -16,6 +16,13 @@ const studentProfileSchema = new mongoose.Schema(
     emergencyContactName: String,
     emergencyContactPhone: String,
     photoURL: String,
+
+    verified: { type: Boolean, default: false },
+    documents: {
+      passportPhotoUrl: String,
+      studentIdUrl: String,
+      admissionLetterUrl: String,
+    },
   },
   { timestamps: true }
 );

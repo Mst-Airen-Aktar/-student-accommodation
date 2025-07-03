@@ -9,6 +9,7 @@ export default function RoomDetails() {
   const [room, setRoom] = useState(null);
   const [mainImg, setMainImg] = useState("");
   const [loading, setLoading] = useState(true);
+  const [studentProfile, setStudentProfile] = useState(null); // Optional: Student profile info
   const [landlordInfo, setLandlordInfo] = useState(null); // Optional: Contact info
   const { user } = useContext(AuthContext); // Assuming you have AuthContext to get user info
   // for booking modal
@@ -63,6 +64,23 @@ export default function RoomDetails() {
       console.error(err);
     }
   };
+
+  // fetch student profile
+  useEffect(() => {
+    const fetchStudentProfile = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/student-profile/${user?.uid}`
+        );
+        setStudentProfile(res.data);
+      } catch (err) {
+        console.error("Error fetching student profile:", err);
+      }
+    };
+    if (user?.uid) {
+      fetchStudentProfile();
+    }
+  }, [user?.uid]);
 
   if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
   if (!room) return <div className="p-6 text-red-500">Room not found</div>;
@@ -153,20 +171,31 @@ export default function RoomDetails() {
           </p>
 
           {/* Book Button */}
-          <div className="pt-4">
-            <button
-              disabled={room.status !== "Available"}
-              type="button"
-              onClick={() => setIsBookingOpen(true)}
-              className={`${
-                room.status !== "Available"
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-pink-700 hover:bg-pink-800"
-              } text-white px-4 py-2 rounded shadow transition-colors duration-200`}
-            >
-              Book Now
-            </button>
-          </div>
+          {/* student is not verified then book now button disable */}
+          <button
+            onClick={() => setIsBookingOpen(true)}
+            disabled={!studentProfile?.verified}
+            className={`mt-4 w-full bg-pink-700 text-white py-2 rounded hover:bg-pink-800 ${
+              !studentProfile?.verified ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {studentProfile?.verified
+              ? "📩 Book Now"
+              : "Verify Profile to Book"}
+          </button>
+          {/* Optional: Show student profile verification status */}
+          {studentProfile && (
+            <p className="mt-2 text-sm text-gray-600">
+              Your profile is{" "}
+              <span
+                className={`${
+                  studentProfile.verified ? "text-green-600" : "text-yellow-600"
+                } font-semibold`}
+              >
+                {studentProfile.verified ? "Verified" : "Pending Verification"}
+              </span>
+            </p>
+          )}
         </div>
 
         {/* Description and Contact */}

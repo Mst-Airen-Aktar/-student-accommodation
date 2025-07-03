@@ -4,6 +4,7 @@ import RoomDetails from "../components/RoomDetails";
 import AdminLayout from "../layout/AdminLayout";
 import LandLordLayout from "../layout/LandLordLayout";
 import MainLayout from "../layout/MainLayout";
+import AdminAllUsers from "../pages/Admin/AdminAllUsers";
 import LandlordVerification from "../pages/Admin/andlordVerification";
 import VerifyUsers from "../pages/Admin/VerifyUsers";
 import BrowseRooms from "../pages/BrowseRooms";
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <h1>Admin Dashboard</h1> },
-      { path: "users", element: <h1>All Users</h1> },
+      { path: "users", element: <AdminAllUsers /> },
       { path: "verify", element: <LandlordVerification /> },
       { path: "settings", element: <h1>Settings</h1> },
     ],

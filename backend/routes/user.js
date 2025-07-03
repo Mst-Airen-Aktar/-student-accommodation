@@ -22,12 +22,33 @@ router.post("/register", async (req, res) => {
 });
 
 // routes/user.routes.js
+// router.get("/", async (req, res) => {
+//   try {
+//     const users = await User.find({ role: { $ne: "admin" } }); // exclude admin
+//     res.json(users);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+// GET all users with optional pagination
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find({ role: { $ne: "admin" } }); // exclude admin
-    res.json(users);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalUsers = await User.countDocuments();
+    const users = await User.find().skip(skip).limit(limit);
+
+    res.json({
+      users,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: err.message });
   }
 });
 
